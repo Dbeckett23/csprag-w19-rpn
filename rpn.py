@@ -1,36 +1,36 @@
-stack = []
+#!/usr/bin/env python3
 
-def add():
-    stack.append(stack.pop() + stack.pop())
-
-def subtract():
-    stack.append(stack.pop() - stack.pop())
-
-def handleInput(input):
-    if(input.isnumeric()):
-        stack.append(int(input))
-    else:
-        # its a string, i.e +,-,*,/ or junk
-        if(len(stack) < 2):
-            return
-        if(input == '+'):
-            add()
-        elif(input == '-'):
-            subtract()
+import operator
 
 
-def calculate(arg):
-    input = arg.split()
-    for x in range(len(input)):
-        handleInput(input[x])
-    if(len(stack) == 0):
-        return 0
-    else :
-        return stack[len(stack)-1]
-            
+operators = {
+    '+': operator.add,
+    '-': operator.sub,
+    '*': operator.mul,
+    '/': operator.truediv,
+}
+
+def calculate(myarg):
+    stack = list()
+    for token in myarg.split():
+        try:
+            token = int(token)
+            stack.append(token)
+        except ValueError:
+            function = operators[token]
+            arg2 = stack.pop()
+            arg1 = stack.pop()
+            result = function(arg1, arg2)
+            stack.append(result)
+        print(stack)
+    if len(stack) != 1:
+        raise TypeError("Too many parameters")
+    return stack.pop()
+
 def main():
-    while True: 
-        calculate(input("rpn calc> "))
+    while True:
+        result = calculate(input("rpn calc> "))
+        print("Result: ", result)
 
-if __name__=='__main__':
+if __name__ == '__main__':
     main()
